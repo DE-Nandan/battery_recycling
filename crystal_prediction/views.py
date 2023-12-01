@@ -10,7 +10,9 @@ def crystalStructurePredictor(request):
             prediction = predict_crystal_structure(instance)  # Implement this function
             instance.predicted_xgb = prediction  # Assuming you have a predicted_xgb field in your model
             instance.save()
+            return render(request, 'crystal_prediction/crystal_structure_predictor.html', {'form': form , 'instance':instance })
+
     else:
         form = CrystalStructureForm()
 
-    return render(request, 'crystal_prediction/crystal_structure_predictor.html', {'form': form , 'instance':instance})
+    return render(request, 'crystal_prediction/crystal_structure_predictor.html', {'form': form })

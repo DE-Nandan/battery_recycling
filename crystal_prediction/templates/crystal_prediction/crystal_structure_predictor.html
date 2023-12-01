@@ -1,0 +1,14 @@
+<!-- predictor/templates/predictor/crystal_structure_predictor.html -->
+
+<h2>Crystal Structure Predictor</h2>
+
+<form method="post" action="{% url 'crystal_structure_predictor' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Predict">
+</form>
+
+{% if instance %}
+    <h3>Prediction:</h3>
+    <p>Crystal System: {{ instance.predicted_xgb }}</p>
+{% endif %}

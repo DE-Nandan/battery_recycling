@@ -7,3 +7,59 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report,confusion_matrix, accuracy_score, roc_auc_score
+import os
+
+def predict_crystal_structure(crystal_instance):
+
+    file_path = os.path.join(os.path.dirname(__file__), 'lithium-ion batteries.csv')
+
+    data_train = pd.read_csv(file_path)
+
+    data_train.drop(['Materials Id'], axis=1,inplace=True)
+
+    data_train.dropna(inplace=True)
+
+    lb_encoder_1 = LabelEncoder()
+    lb_encoder_2 = LabelEncoder()
+    lb_encoder_3 = LabelEncoder()
+    data_train["Formula"] = lb_encoder_1.fit_transform(data_train["Formula"])
+    data_train["Spacegroup"] = lb_encoder_2.fit_transform(data_train["Spacegroup"])
+    data_train["Crystal System"] = lb_encoder_3.fit_transform(data_train["Crystal System"])
+
+
+    X = data_train.drop('Crystal System',axis=1)
+    y = data_train['Crystal System']
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30)
+
+
+    transformed_data = {
+        'Formula': [crystal_instance.formula],
+        'Spacegroup': [crystal_instance.spacegroup],
+        'Formation Energy (eV)': [crystal_instance.formation_energy],
+        'E Above Hull (eV)': [crystal_instance.e_above_hull],
+        'Band Gap (eV)': [crystal_instance.band_gap],
+        'Nsites': [crystal_instance.nsites],
+        'Density (gm/cc)': [crystal_instance.density],
+        'Volume': [crystal_instance.volume],
+        'Has Bandstructure': [crystal_instance.has_bandstructure]
+    }
+
+    df = pd.DataFrame(transformed_data)
+
+    df["Formula"] = lb_encoder_1.transform(df["Formula"])
+    df["Spacegroup"] = lb_encoder_2.transform(df["Spacegroup"])
+
+
+    
+    xgb_model = XGBClassifier()
+    xgb_model.fit(X_train, y_train)
+    prediction_xgb = xgb_model.predict(df)
+
+    predicted_crystal_system = lb_encoder_3.inverse_transform(prediction_xgb)[0]
+
+    return predicted_crystal_system
+
+
+
+

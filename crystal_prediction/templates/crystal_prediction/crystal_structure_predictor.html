@@ -27,21 +27,44 @@
     {% endfor %}
     </fieldset>
     <div class="form-group">
-    <input type="submit" value="Predict">
+        <button class="btn btn-outline-info" type="submit">Predict</button>
     </div>
 </form>
-</div>
+
 
      
-        </div>
-        </div>
+     
 
 
   
 
 {% if instance %}
-    <h3 class="text-center">Prediction:</h3>
-    <h2 class="text-center">Crystal System: {{ instance.predicted_xgb }}</h2>
+
+<script>
+    // JavaScript to scroll to the predicted result
+    document.addEventListener('DOMContentLoaded', function() {
+        const predictionElement = document.getElementById('prediction-section');
+        predictionElement.scrollIntoView({ behavior: 'smooth' });
+    });
+</script>
+
+<div id="prediction-section" class="text-center alert alert-success">
+    <h3>Prediction:</h3>
+    <h5>Crystal System: {{ instance.predicted_xgb }}</h5>
+</div>
+
+
+</div>
+
+
+</div>
+</div>
+
+
+
+
+
+    
 {% endif %}
 
 

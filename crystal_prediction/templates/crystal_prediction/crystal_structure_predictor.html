@@ -1,4 +1,5 @@
 {% extends "web_app/base.html" %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% block content %}
 
@@ -34,7 +35,9 @@
 
      
      
-
+<div id="loading-indicator" class="text-center" style="display: none;">
+    <img src="{% static 'loading.gif' %}" alt="Processing..."> Processing... Please wait.
+</div>
 
   
 
@@ -59,6 +62,44 @@
 
 </div>
 </div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#prediction-form").submit(function (e) {
+            e.preventDefault();
+
+            $("#loading-indicator").show();
+            $("#prediction-section").empty();
+
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    $("#loading-indicator").hide();
+
+                    if (response.processing) {
+                        // Display processing message
+                        $("#loading-indicator").show();
+                        $("#loading-indicator").text("Processing... Please wait.");
+                    } else {
+                        // Display prediction result
+                        $("#prediction-section").html(
+                            "<h3>Prediction:</h3><h5>Crystal System: " + response.instance.predicted_xgb + "</h5>"
+                        );
+                    }
+                },
+                error: function (error) {
+                    console.log("Error:", error);
+                    $("#loading-indicator").hide();
+                }
+            });
+        });
+    });
+</script>
 
 
 

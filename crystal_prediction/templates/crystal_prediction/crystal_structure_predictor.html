@@ -1,14 +1,55 @@
-<!-- predictor/templates/predictor/crystal_structure_predictor.html -->
+{% extends "web_app/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
 
-<h2>Crystal Structure Predictor</h2>
 
+<div class="container">
+    <div class="row justify-content-center">
+     
+
+<div class="content-section">
+    <h2 class="text-center">Crystal Structure Predictor</h2>
 <form method="post" action="{% url 'crystal_structure_predictor' %}">
     {% csrf_token %}
-    {{ form.as_p }}
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-2 small">Fill required parameters</legend>
+        {% for field in form %}
+        {% if field.widget.input_type == 'checkbox' %}
+            <div class="form-check mb-2">
+                {{ field|as_crispy_field }}
+                {{ field.label_tag }}
+            </div>
+        {% else %}
+            <div class="form-group mb-3">
+                {{ field|as_crispy_field }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    </fieldset>
+    <div class="form-group">
     <input type="submit" value="Predict">
+    </div>
 </form>
+</div>
+
+     
+        </div>
+        </div>
+
+
+  
 
 {% if instance %}
-    <h3>Prediction:</h3>
-    <p>Crystal System: {{ instance.predicted_xgb }}</p>
+    <h3 class="text-center">Prediction:</h3>
+    <h2 class="text-center">Crystal System: {{ instance.predicted_xgb }}</h2>
 {% endif %}
+
+
+
+    
+{% endblock content %}
+
+
+
+
+

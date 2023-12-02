@@ -7,9 +7,11 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report,confusion_matrix, accuracy_score, roc_auc_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeRegressor
 import os
 
-def predict_crystal_structure(crystal_instance):
+def predict_crystal_structure(crystal_instance,prediction_method):
 
     file_path = os.path.join(os.path.dirname(__file__), 'lithium-ion batteries.csv')
 
@@ -51,12 +53,23 @@ def predict_crystal_structure(crystal_instance):
     df["Spacegroup"] = lb_encoder_2.transform(df["Spacegroup"])
 
 
-    
-    xgb_model = XGBClassifier()
-    xgb_model.fit(X_train, y_train)
-    prediction_xgb = xgb_model.predict(df)
+    prediction = ''
 
-    predicted_crystal_system = lb_encoder_3.inverse_transform(prediction_xgb)[0]
+    if(prediction_method == 'xgb'):
+        xgb_model = XGBClassifier()
+        xgb_model.fit(X_train, y_train)
+        prediction = xgb_model.predict(df)
+    elif(prediction_method == 'random_forest'):
+        rfc = RandomForestClassifier(min_samples_split = 15, min_samples_leaf = 20)
+        rfc.fit(X_train, y_train)
+        prediction = rfc.predict(df)
+    elif(prediction_method == 'decision_tree'):
+        decision_tree = DecisionTreeRegressor()
+        decision_tree.fit(X_train, y_train)
+        prediction = decision_tree.predict(df).astype(int)
+       
+
+    predicted_crystal_system = lb_encoder_3.inverse_transform(prediction)[0]
 
     return predicted_crystal_system
 

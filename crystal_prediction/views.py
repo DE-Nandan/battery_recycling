@@ -7,7 +7,8 @@ def crystalStructurePredictor(request):
         form = CrystalStructureForm(request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
-            prediction = predict_crystal_structure(instance)  # Implement this function
+            prediction_method = form.cleaned_data.get('prediction_method')
+            prediction = predict_crystal_structure(instance,prediction_method)  # Implement this function
             instance.predicted_xgb = prediction  # Assuming you have a predicted_xgb field in your model
             instance.save()
             return render(request, 'crystal_prediction/crystal_structure_predictor.html', {'form': form , 'instance':instance })

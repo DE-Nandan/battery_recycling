@@ -10,11 +10,9 @@ def crystalStructurePredictor(request):
             instance = form.save(commit=False)
             prediction_method = form.cleaned_data.get('prediction_method')
             
-            if(prediction_method == 'neural_network'):
-                 return JsonResponse({'processing': True})
-
             prediction = predict_crystal_structure(instance,prediction_method)  
-            instance.predicted_xgb = prediction
+            
+            instance.predicted = prediction
             instance.save()
             return render(request, 'crystal_prediction/crystal_structure_predictor.html', {'form': form , 'instance':instance })
 
